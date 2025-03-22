@@ -35,6 +35,15 @@ using std::dec;
 
 namespace ElypsoUtils
 {
+	void CrashHandler::Initialize()
+	{
+		//reserve emergency stack space (for stack overflow handling)
+		ULONG stackSize = 32768; //32KB
+		SetThreadStackGuarantee(&stackSize);
+
+		SetUnhandledExceptionFilter(HandleCrash);
+	}
+
 #ifdef _WIN32
 	LONG WINAPI CrashHandler::HandleCrash(EXCEPTION_POINTERS* info)
 	{
