@@ -24,9 +24,10 @@ namespace ElypsoUtils
 	class CRASHHANDLER_API ErrorPopup
 	{
 	public:
-		static inline string programName = "Program name";
-		static inline string programVersion = "1.0.0";
-
+		/// <summary>
+		/// Internal error popup function, not meant to be used by end user.
+		/// </summary>
+		/// <param name="message"></param>
 		static void CreateErrorPopup(const string& message);
 	};
 }
