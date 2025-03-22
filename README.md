@@ -1,1 +1,1 @@
-CrashReporter is a lightweight C++ library for generating user-friendly crash dialogs with stack traces, source file/line info, and automatic .dmp file creation. It integrates seamlessly with Windows applications and supports both debug and release builds.
+CrashHandler is a lightweight C++ 20 library that detects crashes caused by the program the crash handler is attached to. You can display crash messages in Windows error popup and generate a log file with extra info and a dmp file for debugging.
