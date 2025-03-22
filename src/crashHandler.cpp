@@ -57,50 +57,36 @@ namespace ElypsoUtils
 
 		switch (code)
 		{
-			//memory-related exceptions
+			//very common and high priority crashes
 		case EXCEPTION_ACCESS_VIOLATION:
 			oss << "Reason: Access violation (nullptr or invalid memory access)\n";
-			break;
-		case EXCEPTION_IN_PAGE_ERROR:
-			oss << "Reason: Memory access failed (missing or swapped-out memory page)\n";
-			break;
-		case EXCEPTION_DATATYPE_MISALIGNMENT:
-			oss << "Reason: Misaligned memory access for specific data type\n";
-			break;
-		case EXCEPTION_ARRAY_BOUNDS_EXCEEDED:
-			oss << "Reason: Array bounds exceeded\n";
-			break;
-
-			//floating-point exceptions
-		case EXCEPTION_FLT_DIVIDE_BY_ZERO:
-			oss << "Reason: Floating-point divide by zero\n";
-			break;
-		case EXCEPTION_FLT_INVALID_OPERATION:
-			oss << "Reason: Invalid floating-point operation (NaN, corrupted float math)\n";
-			break;
-		case EXCEPTION_FLT_OVERFLOW:
-			oss << "Reason: Floating-point overflow\n";
-			break;
-		case EXCEPTION_FLT_UNDERFLOW:
-			oss << "Reason: Floating-point underflow\n";
-			break;
-		case EXCEPTION_FLT_DENORMAL_OPERAND:
-			oss << "Reason: Floating-point denormal operand (extremely small number)\n";
-			break;
-
-			//other exceptions
-		case EXCEPTION_INT_DIVIDE_BY_ZERO:
-			oss << "Reason: Integer divide by zero\n";
-			break;
-		case EXCEPTION_ILLEGAL_INSTRUCTION:
-			oss << "Reason: Illegal CPU instruction executed\n";
 			break;
 		case EXCEPTION_STACK_OVERFLOW:
 			oss << "Reason: Stack overflow (likely due to infinite recursion)\n";
 			break;
+		case EXCEPTION_ILLEGAL_INSTRUCTION:
+			oss << "Reason: Illegal CPU instruction executed\n";
+			break;
+		case EXCEPTION_INT_DIVIDE_BY_ZERO:
+			oss << "Reason: Integer divide by zero\n";
+			break;
+
+			//rare but useful crashes
+		case EXCEPTION_IN_PAGE_ERROR:
+			oss << "Reason: Memory access failed (missing or swapped-out memory page)\n";
+			break;
+		case EXCEPTION_GUARD_PAGE:
+			oss << "Reason: Guard page accessed (likely stack guard or memory protection violation)\n";
+			break;
+		case EXCEPTION_PRIV_INSTRUCTION:
+			oss << "Reason: Privileged instruction executed in user mode\n";
+			break;
+		case EXCEPTION_BREAKPOINT:
+			oss << "Reason: Breakpoint hit (INT 3 instruction executed)\n";
+			break;
 
 		default:
-			oss << "Reason: Unknown exception\n";
+			oss << "Reason: Unknown exception (code: 0x" << hex << code << ")\n";
 			break;
 		}
 
