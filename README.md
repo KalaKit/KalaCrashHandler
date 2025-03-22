@@ -38,57 +38,62 @@ int main()
 
 ## Types of crashes that are supported
 
-### Access violation
+### Access violation (nullptr or invalid memory access)
 
     Occurs when a program dereferences a null or invalid pointer.  
-    Typically caused by reading from or writing to memory that hasn’t been allocated.
+    Typically caused by reading from or writing to memory that hasn’t been allocated.  
+    Exception: `EXCEPTION_ACCESS_VIOLATION`
 
-### Access violation (reserved + PAGE_NOACCESS)
-
-    Triggers a crash by accessing memory that was reserved but never committed,  
-    and marked as PAGE_NOACCESS via VirtualAlloc.
-
-### In-page error
+### Memory access failed (missing or swapped-out memory page)
 
     Occurs when accessing a valid memory address whose backing storage (e.g. memory-mapped file or pagefile)  
-    could not be loaded into memory — typically due to I/O errors or missing file mappings.
+    could not be loaded into memory — typically due to I/O errors or missing file mappings.  
+    Exception: `EXCEPTION_IN_PAGE_ERROR`
 
-### Datatype misalignment
+### Misaligned memory access for specific data type
 
     Happens when data (e.g. a double) is accessed from an improperly aligned memory address.  
-    On some CPUs (e.g. ARM), this causes a crash due to alignment requirements.
+    On some CPUs (e.g. ARM), this causes a crash due to alignment requirements.  
+    Exception: `EXCEPTION_DATATYPE_MISALIGNMENT`
 
 ### Array bounds exceeded
 
     Reading or writing outside the bounds of an array, leading to unpredictable behavior or crashes.  
-    May not crash on all platforms, but it is undefined behavior and often results in an access violation.
+    Often results in an access violation on systems that detect it.  
+    Exception: `EXCEPTION_ARRAY_BOUNDS_EXCEEDED`
 
-### Guard page accessed
+### Guard page accessed (likely stack guard or memory protection violation)
 
     Accessing a guard page (used for stack expansion or protected memory regions)  
-    triggers a controlled crash, often seen just before a stack overflow.
+    triggers a controlled crash, often seen just before a stack overflow.  
+    Exception: `EXCEPTION_GUARD_PAGE`
+
+### Integer overflow with overflow checking enabled
+
+    Occurs when signed integer arithmetic exceeds the representable range,  
+    and overflow checking is enabled (e.g. with `/RTC` or `_overflow` intrinsics).  
+    Exception: `EXCEPTION_INT_OVERFLOW`
 
 ### Integer divide by zero
 
-    Dividing an integer by zero results in a structured exception (STATUS_INTEGER_DIVIDE_BY_ZERO).  
-    This is a definite crash on Windows platforms.
+    Dividing an integer by zero results in a structured exception.  
+    This is a definite crash on Windows platforms.  
+    Exception: `EXCEPTION_INT_DIVIDE_BY_ZERO`
 
-### Integer overflow
-
-    Occurs when signed integer arithmetic exceeds the representable range,  
-    and overflow checking is enabled (e.g. with /RTC or `_overflow` intrinsics).
-
-### Privileged instruction
+### Privileged instruction executed in user mode
 
     Executing a privileged CPU instruction (e.g. `hlt`, `cli`) from user mode causes a crash.  
-    These are restricted to kernel-mode code.
+    These are restricted to kernel-mode code.  
+    Exception: `EXCEPTION_PRIV_INSTRUCTION`
 
-### Illegal instruction
+### Illegal CPU instruction executed
 
     Manually executes invalid or undefined CPU instructions (e.g. 0xFF 0xFF 0xFF 0xFF).  
-    Always causes an illegal instruction exception (STATUS_ILLEGAL_INSTRUCTION).
+    Always causes an illegal instruction exception.  
+    Exception: `EXCEPTION_ILLEGAL_INSTRUCTION`
 
-### Stack overflow
+### Stack overflow (likely due to infinite recursion)
 
     Triggers infinite recursion or excessive stack allocation until the call stack limit is exceeded.  
-    Results in a stack overflow exception (STATUS_STACK_OVERFLOW) and immediate crash.
+    Results in a stack overflow exception and immediate crash.  
+    Exception: `EXCEPTION_STACK_OVERFLOW`
