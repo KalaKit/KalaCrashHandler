@@ -4,9 +4,12 @@
 //Read LICENSE.md for more information.
 
 //crash handler
-#include "log.hpp"
+#include "errorPopup.hpp"
 
 namespace ElypsoUtils
 {
+	void ErrorPopup::CreateErrorPopup(const string& message)
+	{
 
+	}
 }

@@ -49,14 +49,13 @@ set(CRASH_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/include")
 
 # Add source files
 file(GLOB_RECURSE CRASH_SRC_FILES CONFIGURE_DEPENDS
-    ${PHYSICS_SRC_DIR}/*.cpp
+    ${CRASH_SRC_DIR}/*.cpp
 )
 
 # Build as a shared library (DLL)
 add_library(CrashHandler SHARED ${CRASH_SRC_FILES})
 set_target_properties(CrashHandler PROPERTIES OUTPUT_NAME "CrashHandler")
 target_compile_features(CrashHandler PRIVATE cxx_std_20)
-target_include_directories(CrashHandler PRIVATE ${CRASH_INCLUDE_DIRS})
 
 # Append 'D' suffix to debug builds for both Windows and Linux
 set_target_properties(CrashHandler PROPERTIES
@@ -79,7 +78,7 @@ else()
 endif()
 
 # Define preprocessor directives
-target_compile_definitions(CrashHandler PRIVATE PHYSICS_DLL_EXPORT)
+target_compile_definitions(CrashHandler PRIVATE CRASHHANDLER_DLL_EXPORT)
 
 # Install the DLL and its import library (CrashHandler.dll + CrashHandler.lib)
 install(TARGETS CrashHandler

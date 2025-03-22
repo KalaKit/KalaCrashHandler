@@ -15,10 +15,18 @@
 	#define CRASHHANDLER_API
 #endif
 
+#include <string>
+
 namespace ElypsoUtils
 {
-	class Log
-	{
+	using std::string;
 
+	class ErrorPopup
+	{
+	public:
+		static inline string programName = "Program name";
+		static inline string programVersion = "1.0.0";
+
+		static void CreateErrorPopup(const string& message);
 	};
 }
