@@ -57,36 +57,51 @@ namespace ElypsoUtils
 
 		switch (code)
 		{
+			//memory-related exceptions
 		case EXCEPTION_ACCESS_VIOLATION:
 			oss << "Reason: Access violation (nullptr or invalid memory access)\n";
-			break;
-		case EXCEPTION_ARRAY_BOUNDS_EXCEEDED:
-			oss << "Reason: Array index out of bounds\n";
-			break;
-		case EXCEPTION_INT_DIVIDE_BY_ZERO:
-			oss << "Reason: Integer divide by zero\n";
-			break;
-		case EXCEPTION_INT_OVERFLOW:
-			oss << "Reason: Integer overflow\n";
-			break;
-		case EXCEPTION_STACK_OVERFLOW:
-			oss << "Reason: Stack overflow (likely due to infinite recursion)\n";
-			break;
-		case EXCEPTION_ILLEGAL_INSTRUCTION:
-			oss << "Reason: Invalid CPU instruction (corrupted memory or jump to bad code)\n";
-			break;
-		case EXCEPTION_DATATYPE_MISALIGNMENT:
-			oss << "Reason: Misaligned data access (bad struct pointer or cast)\n";
 			break;
 		case EXCEPTION_IN_PAGE_ERROR:
 			oss << "Reason: Memory access failed (missing or swapped-out memory page)\n";
 			break;
+		case EXCEPTION_DATATYPE_MISALIGNMENT:
+			oss << "Reason: Misaligned memory access for specific data type\n";
+			break;
+		case EXCEPTION_ARRAY_BOUNDS_EXCEEDED:
+			oss << "Reason: Array bounds exceeded\n";
+			break;
+
+			//floating-point exceptions
 		case EXCEPTION_FLT_DIVIDE_BY_ZERO:
 			oss << "Reason: Floating-point divide by zero\n";
 			break;
 		case EXCEPTION_FLT_INVALID_OPERATION:
 			oss << "Reason: Invalid floating-point operation (NaN, corrupted float math)\n";
 			break;
+		case EXCEPTION_FLT_OVERFLOW:
+			oss << "Reason: Floating-point overflow\n";
+			break;
+		case EXCEPTION_FLT_UNDERFLOW:
+			oss << "Reason: Floating-point underflow\n";
+			break;
+		case EXCEPTION_FLT_STACK_CHECK:
+			oss << "Reason: Floating-point stack check failed (unbalanced FPU stack)\n";
+			break;
+		case EXCEPTION_FLT_DENORMAL_OPERAND:
+			oss << "Reason: Floating-point denormal operand (extremely small number)\n";
+			break;
+
+			//other exceptions
+		case EXCEPTION_INT_DIVIDE_BY_ZERO:
+			oss << "Reason: Integer divide by zero\n";
+			break;
+		case EXCEPTION_ILLEGAL_INSTRUCTION:
+			oss << "Reason: Illegal CPU instruction executed\n";
+			break;
+		case EXCEPTION_STACK_OVERFLOW:
+			oss << "Reason: Stack overflow (likely due to infinite recursion)\n";
+			break;
+
 		default:
 			oss << "Reason: Unknown exception\n";
 			break;
