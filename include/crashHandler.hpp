@@ -26,7 +26,7 @@ namespace ElypsoUtils
 	using std::string;
 	using std::ostringstream;
 
-	class CrashHandler
+	class CRASHHANDLER_API CrashHandler
 	{
 	public:
 #ifdef _WIN32

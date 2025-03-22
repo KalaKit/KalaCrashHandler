@@ -17,7 +17,7 @@
 
 namespace ElypsoUtils
 {
-	class Log
+	class CRASHHANDLER_API Log
 	{
 
 	};

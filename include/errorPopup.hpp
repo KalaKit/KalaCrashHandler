@@ -21,7 +21,7 @@ namespace ElypsoUtils
 {
 	using std::string;
 
-	class ErrorPopup
+	class CRASHHANDLER_API ErrorPopup
 	{
 	public:
 		static inline string programName = "Program name";
