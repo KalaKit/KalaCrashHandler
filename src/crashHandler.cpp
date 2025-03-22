@@ -84,9 +84,6 @@ namespace ElypsoUtils
 		case EXCEPTION_FLT_UNDERFLOW:
 			oss << "Reason: Floating-point underflow\n";
 			break;
-		case EXCEPTION_FLT_STACK_CHECK:
-			oss << "Reason: Floating-point stack check failed (unbalanced FPU stack)\n";
-			break;
 		case EXCEPTION_FLT_DENORMAL_OPERAND:
 			oss << "Reason: Floating-point denormal operand (extremely small number)\n";
 			break;
