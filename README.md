@@ -1,6 +1,6 @@
 ## Introduction
 
-CrashHandler is a lightweight C++ 20 library that detects crashes caused by the program the crash handler is attached to. You can display crash messages in Windows error popup and generate a log file with extra info and a dmp file for debugging.
+CrashHandler is a lightweight C++ 20 library for Windows that detects mostly common and some rarer but useful crashes caused by the program the crash handler is attached to. It will display crash messages in the error popup and it will generate a log file with extra info and a dmp file for debugging.
 
 ![Crash Screenshot](images/crash_popup.png)
 
@@ -40,150 +40,55 @@ int main()
 
 ### Access violation
 
-```cpp
-#include <iostream>
+    Occurs when a program dereferences a null or invalid pointer.  
+    Typically caused by reading from or writing to memory that hasn’t been allocated.
 
-int AccessViolation()
-{
-    int* ptr = nullptr; // Null pointer
-    std::cout << *ptr << std::endl; // Crash: access violation
-    return 0;
-}
-```
+### Access violation (reserved + PAGE_NOACCESS)
 
-### Memory access failed (IN_PAGE_ERROR)
+    Triggers a crash by accessing memory that was reserved but never committed,  
+    and marked as PAGE_NOACCESS via VirtualAlloc.
 
-```cpp
-#include <windows.h>
+### In-page error
 
-int InPageError()
-{
-    char* ptr = (char*)VirtualAlloc(nullptr, 4096, MEM_RESERVE, PAGE_NOACCESS);
-    *ptr = 1; // Accessing inaccessible memory page
-    return 0;
-}
-```
+    Occurs when accessing a valid memory address whose backing storage (e.g. memory-mapped file or pagefile)  
+    could not be loaded into memory — typically due to I/O errors or missing file mappings.
 
 ### Datatype misalignment
 
-```cpp
-#include <malloc.h>
-
-struct MisalignedStruct { double d; };
-
-int DatatypeMisalignment()
-{
-    MisalignedStruct* m = (MisalignedStruct*)_aligned_malloc(sizeof(MisalignedStruct), 1);
-    double crash = m->d; // Misaligned access
-    _aligned_free(m);
-    return (int)crash;
-}
-```
+    Happens when data (e.g. a double) is accessed from an improperly aligned memory address.  
+    On some CPUs (e.g. ARM), this causes a crash due to alignment requirements.
 
 ### Array bounds exceeded
 
-```cpp
-int ArrayBoundsExceeded()
-{
-    int arr[2] = {1, 2};
-    int crash = arr[10]; // Out-of-bounds access
-    return crash;
-}
-```
+    Reading or writing outside the bounds of an array, leading to unpredictable behavior or crashes.  
+    May not crash on all platforms, but it is undefined behavior and often results in an access violation.
+
+### Guard page accessed
+
+    Accessing a guard page (used for stack expansion or protected memory regions)  
+    triggers a controlled crash, often seen just before a stack overflow.
 
 ### Integer divide by zero
 
-```cpp
-int IntegerDivideByZero()
-{
-    int zero = 0;
-    int crash = 42 / zero; // Integer divide by zero
-    return crash;
-}
-```
+    Dividing an integer by zero results in a structured exception (STATUS_INTEGER_DIVIDE_BY_ZERO).  
+    This is a definite crash on Windows platforms.
 
-### Floating-point divide by zero
+### Integer overflow
 
-```cpp
-int FltDivideByZero()
-{
-    float zero = 0.0f;
-    float crash = 1.0f / zero; // Floating-point divide by zero
-    return (int)crash;
-}
-```
+    Occurs when signed integer arithmetic exceeds the representable range,  
+    and overflow checking is enabled (e.g. with /RTC or `_overflow` intrinsics).
 
-### Invalid floating-point operation
+### Privileged instruction
 
-```cpp
-#include <cmath>
-
-int FltInvalidOperation()
-{
-    float invalid = std::sqrt(-1.0f); // NaN
-    float crash = invalid + 1.0f;
-    return (int)crash;
-}
-```
-
-### Floating-point overflow
-
-```cpp
-int FltOverflow()
-{
-    float large = 1e38f;
-    float crash = large * large; // Overflow
-    return (int)crash;
-}
-```
-
-### Floating-point underflow
-
-```cpp
-int FltUnderflow()
-{
-    float small = 1e-38f;
-    float crash = small / 1e10f; // Underflow
-    return (int)crash;
-}
-```
-
-### Floating-point denormal operand
-
-```cpp
-int FltDenormalOperand()
-{
-    volatile float denorm = 1e-39f;
-    float crash = denorm * 1.0f;
-    return (int)crash;
-}
-```
+    Executing a privileged CPU instruction (e.g. `hlt`, `cli`) from user mode causes a crash.  
+    These are restricted to kernel-mode code.
 
 ### Illegal instruction
 
-```cpp
-typedef void (*CrashFunc)();
-
-int IllegalInstruction()
-{
-    unsigned char code[] = { 0xFF, 0xFF, 0xFF, 0xFF }; // Invalid opcodes
-    CrashFunc crash = (CrashFunc)code;
-    crash(); // Execute invalid code
-    return 0;
-}
-```
+    Manually executes invalid or undefined CPU instructions (e.g. 0xFF 0xFF 0xFF 0xFF).  
+    Always causes an illegal instruction exception (STATUS_ILLEGAL_INSTRUCTION).
 
 ### Stack overflow
 
-```cpp
-void RecursiveCrash()
-{
-    RecursiveCrash(); // Infinite recursion
-}
-
-int StackOverflow()
-{
-    RecursiveCrash(); // Stack overflow
-    return 0;
-}
-```
+    Triggers infinite recursion or excessive stack allocation until the call stack limit is exceeded.  
+    Results in a stack overflow exception (STATUS_STACK_OVERFLOW) and immediate crash.
