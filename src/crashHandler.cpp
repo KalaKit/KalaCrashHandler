@@ -168,31 +168,11 @@ namespace ElypsoUtils
 			dumpInfo.ExceptionPointers = info;
 			dumpInfo.ClientPointers = FALSE;
 
-			MINIDUMP_TYPE dumpFlags = static_cast<MINIDUMP_TYPE>(
-#ifdef _DEBUG
-				//full stack + thread context
-				MiniDumpWithThreadInfo
-				//global/static vars
-				| MiniDumpWithDataSegs
-				//heap allocations
-				| MiniDumpWithPrivateReadWriteMemory
-				//debugging leaks or resource state
-				| MiniDumpWithHandleData
-#else
-				//full stack + thread context
-				MiniDumpWithThreadInfo
-				//global/static vars
-				| MiniDumpWithDataSegs
-				//heap/local memory relevant to the current crash context
-				| MiniDumpWithIndirectlyReferencedMemory
-#endif
-				);
-
 			MiniDumpWriteDump(
 				GetCurrentProcess(),
 				GetCurrentProcessId(),
 				hFile,
-				dumpFlags,
+				MiniDumpWithThreadInfo,
 				&dumpInfo,
 				nullptr,
 				nullptr);
