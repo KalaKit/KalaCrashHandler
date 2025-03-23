@@ -36,10 +36,10 @@ int main()
     std::string name = "MyProgramName";
     CrashHandler::SetProgramName(name);
 	
-	//set this to true if you wish to get a .dmp file 
-	//generated at the location of your executable
-	//every time the application crashes on Windows
-	CrashHandler::SetDumpCreateState(true);
+    //set this to true if you wish to get a .dmp file 
+    //generated at the location of your executable
+    //every time the application crashes on Windows
+    CrashHandler::SetDumpCreateState(true);
 
     //attach any function similarly to this that will be called
     //once the user presses Ok or closes the error popup
