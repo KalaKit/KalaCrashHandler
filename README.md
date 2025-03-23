@@ -41,12 +41,13 @@ int main()
 
 ## These crash types are supported and will be displayed
 
-### Very common and high priority
+### Common and high priority crash types
 
 #### Access violation (nullptr or invalid memory access)
 
     Occurs when a program dereferences a null or invalid pointer.  
-    Typically caused by reading from or writing to memory that hasn’t been allocated.  
+    Typically caused by reading from, writing to, or executing memory that hasn’t been allocated.  
+    The type of access (read, write, execute) is reported.  
     Exception: `EXCEPTION_ACCESS_VIOLATION`
 
 #### Stack overflow (likely due to infinite recursion)
@@ -69,13 +70,40 @@ int main()
 
 ---
 
+### Security-type crashes
+
+#### Stack buffer overrun detected (security check failure)
+
+    Detected by compiler-inserted security checks (e.g. stack cookies).  
+    Usually caused by writing past the end of a local stack variable.  
+    Exception: `0xC0000409` (`STATUS_STACK_BUFFER_OVERRUN`)
+
+#### Heap corruption detected
+
+    Triggered when the Windows heap manager detects corruption, such as a double free or memory overwrite.  
+    Exception: `0xC0000374` (`STATUS_HEAP_CORRUPTION`)
+
+#### Invalid SEH disposition
+
+    Occurs when the exception handling chain is corrupted or an invalid handler is invoked.  
+    Often caused by stack corruption.  
+    Exception: `EXCEPTION_INVALID_DISPOSITION`
+
+#### Attempted to continue after a non-continuable exception
+
+    Code tried to resume execution after a fatal exception that cannot be recovered from.  
+    Typically a logic or state machine error.  
+    Exception: `EXCEPTION_NONCONTINUABLE_EXCEPTION`
+
+---
+
 ### Rare but useful crashes
 
-#### Memory access failed (missing or swapped-out memory page)
+#### Breakpoint hit (INT 3 instruction executed)
 
-    Occurs when accessing a valid memory address whose backing storage (e.g. memory-mapped file or pagefile)  
-    could not be loaded into memory — typically due to I/O errors or missing file mappings.  
-    Exception: `EXCEPTION_IN_PAGE_ERROR`
+    A software breakpoint (typically inserted by a debugger) was triggered.  
+    This is normal during debugging but causes a crash if unhandled at runtime.  
+    Exception: `EXCEPTION_BREAKPOINT`
 
 #### Guard page accessed (likely stack guard or memory protection violation)
 
@@ -89,8 +117,8 @@ int main()
     These are restricted to kernel-mode code.  
     Exception: `EXCEPTION_PRIV_INSTRUCTION`
 
-#### Breakpoint hit (INT 3 instruction executed)
+#### Memory access failed (I/O or paging failure)
 
-    A software breakpoint (typically inserted by a debugger) was triggered.  
-    This is normal during debugging but causes a crash if unhandled at runtime.  
-    Exception: `EXCEPTION_BREAKPOINT`
+    Occurs when accessing a valid memory address whose backing storage (e.g. memory-mapped file or pagefile)  
+    could not be loaded into memory — typically due to I/O errors, device removal, or disk failure.  
+    Exception: `EXCEPTION_IN_PAGE_ERROR`
