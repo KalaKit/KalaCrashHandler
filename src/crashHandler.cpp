@@ -57,10 +57,32 @@ namespace ElypsoUtils
 
 		switch (code)
 		{
-			//very common and high priority crashes
+			//
+			// COMMON AND HIGH PRIORITY CRASH TYPES
+			//
+
 		case EXCEPTION_ACCESS_VIOLATION:
-			oss << "Reason: Access violation (nullptr or invalid memory access)\n";
+		{
+			const ULONG_PTR* accessType = info->ExceptionRecord->ExceptionInformation;
+
+			const char* accessStr = "unknown";
+			switch (accessType[0])
+			{
+			case 0: accessStr = "read from"; break;
+			case 1: accessStr = "write to"; break;
+			case 8: accessStr = "execute"; break;
+			}
+
+			oss << "Reason: Access violation - attemted to " << accessStr
+				<< " invalid memory at address 0x" << hex << accessType[1];
+
+			if (accessType[0] == 8)
+			{
+				oss << "(possible code execution or exploit attempt)";
+			}
+			oss << "\n";
 			break;
+		}
 		case EXCEPTION_STACK_OVERFLOW:
 			oss << "Reason: Stack overflow (likely due to infinite recursion)\n";
 			break;
@@ -71,9 +93,29 @@ namespace ElypsoUtils
 			oss << "Reason: Integer divide by zero\n";
 			break;
 
-			//rare but useful crashes
-		case EXCEPTION_IN_PAGE_ERROR:
-			oss << "Reason: Memory access failed (missing or swapped-out memory page)\n";
+			//
+			// SECURITY-TYPE CRASHES
+			//
+
+		case 0xC0000409: //STATUS_STACK_BUFFER_OVERRUN, not defined in older headers
+			oss << "Reason: Stack buffer overrun detected (security check failure — possible memory corruption)\n";
+			break;
+		case 0xC0000374: //STATUS_HEAP_CORRUPTION, not always defined in older headers
+			oss << "Reason: Heap corruption detected (possible memory overwrite or double free)\n";
+			break;
+		case EXCEPTION_INVALID_DISPOSITION:
+			oss << "Reason: Invalid SEH disposition (stack corruption or invalid exception handler)\n";
+			break;
+		case EXCEPTION_NONCONTINUABLE_EXCEPTION:
+			oss << "Reason: Attempted to continue after a non-continuable exception (fatal logic error)\n";
+			break;
+
+			//
+			// RARE BUT USEFUL CRASHES
+			//
+
+		case EXCEPTION_BREAKPOINT:
+			oss << "Reason: Breakpoint hit (INT 3 instruction executed)\n";
 			break;
 		case EXCEPTION_GUARD_PAGE:
 			oss << "Reason: Guard page accessed (likely stack guard or memory protection violation)\n";
@@ -81,8 +123,8 @@ namespace ElypsoUtils
 		case EXCEPTION_PRIV_INSTRUCTION:
 			oss << "Reason: Privileged instruction executed in user mode\n";
 			break;
-		case EXCEPTION_BREAKPOINT:
-			oss << "Reason: Breakpoint hit (INT 3 instruction executed)\n";
+		case EXCEPTION_IN_PAGE_ERROR:
+			oss << "Reason: Memory access failed (I/O or paging failure)\n";
 			break;
 
 		default:
