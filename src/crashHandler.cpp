@@ -88,9 +88,6 @@ namespace ElypsoUtils
 		case EXCEPTION_STACK_OVERFLOW:
 			oss << "Reason: Stack overflow (likely due to infinite recursion)\n";
 			break;
-		case EXCEPTION_ILLEGAL_INSTRUCTION:
-			oss << "Reason: Illegal CPU instruction executed\n";
-			break;
 		case EXCEPTION_INT_DIVIDE_BY_ZERO:
 			oss << "Reason: Integer divide by zero\n";
 			break;
@@ -99,6 +96,9 @@ namespace ElypsoUtils
 			// RARE BUT USEFUL CRASHES
 			//
 
+		case EXCEPTION_ILLEGAL_INSTRUCTION:
+			oss << "Reason: Illegal CPU instruction executed\n";
+			break;
 		case EXCEPTION_BREAKPOINT:
 			oss << "Reason: Breakpoint hit (INT 3 instruction executed)\n";
 			break;
