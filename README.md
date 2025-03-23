@@ -1,10 +1,17 @@
-## Introduction
+# Introduction
 
 CrashHandler is a lightweight C++ 20 library for Windows that detects mostly common and some rarer but useful crashes caused by the program the crash handler is attached to. It will display crash messages in the error popup and it will generate a log file with extra info and a dmp file for debugging.
 
 ![Crash Screenshot](images/crash_popup.png)
 
-## How to use
+# Prerequisites (when compiling from source code)
+
+- Visual Studio 2022 (with C++ CMake tools and Windows 10 or 11 SDK)
+- Ninja and CMake 3.30.3 or newer (or extract Windows_prerequsites.7z and run setup.bat)
+
+To compile from source code simply run 'build_windows_release.bat' or 'build_windows_debug.bat' depending on your preferences then simply copy and attach the dll, lib and header files with your preferred way to your program source directory.
+
+# How to use
 
 ```cpp
 #include <string>
@@ -39,7 +46,11 @@ int main()
 
 ---
 
-## These crash types are supported and will be displayed
+# These crash types are supported and will be displayed
+
+The images in the images folder also show each crash type (except EXCEPTION_IN_PAGE_ERROR) and what their error messages look like.
+
+---
 
 ### Common and high priority crash types
 
