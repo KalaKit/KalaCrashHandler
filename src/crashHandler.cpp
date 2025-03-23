@@ -94,23 +94,6 @@ namespace ElypsoUtils
 			break;
 
 			//
-			// SECURITY-TYPE CRASHES
-			//
-
-		case 0xC0000409: //STATUS_STACK_BUFFER_OVERRUN, not defined in older headers
-			oss << "Reason: Stack buffer overrun detected (security check failure — possible memory corruption)\n";
-			break;
-		case 0xC0000374: //STATUS_HEAP_CORRUPTION, not always defined in older headers
-			oss << "Reason: Heap corruption detected (possible memory overwrite or double free)\n";
-			break;
-		case EXCEPTION_INVALID_DISPOSITION:
-			oss << "Reason: Invalid SEH disposition (stack corruption or invalid exception handler)\n";
-			break;
-		case EXCEPTION_NONCONTINUABLE_EXCEPTION:
-			oss << "Reason: Attempted to continue after a non-continuable exception (fatal logic error)\n";
-			break;
-
-			//
 			// RARE BUT USEFUL CRASHES
 			//
 
@@ -122,6 +105,9 @@ namespace ElypsoUtils
 			break;
 		case EXCEPTION_PRIV_INSTRUCTION:
 			oss << "Reason: Privileged instruction executed in user mode\n";
+			break;
+		case EXCEPTION_NONCONTINUABLE_EXCEPTION:
+			oss << "Reason: Attempted to continue after a non-continuable exception (fatal logic error)\n";
 			break;
 		case EXCEPTION_IN_PAGE_ERROR:
 			oss << "Reason: Memory access failed (I/O or paging failure)\n";
