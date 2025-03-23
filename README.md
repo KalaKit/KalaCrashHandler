@@ -70,33 +70,6 @@ int main()
 
 ---
 
-### Security-type crashes
-
-#### Stack buffer overrun detected (security check failure)
-
-    Detected by compiler-inserted security checks (e.g. stack cookies).  
-    Usually caused by writing past the end of a local stack variable.  
-    Exception: `0xC0000409` (`STATUS_STACK_BUFFER_OVERRUN`)
-
-#### Heap corruption detected
-
-    Triggered when the Windows heap manager detects corruption, such as a double free or memory overwrite.  
-    Exception: `0xC0000374` (`STATUS_HEAP_CORRUPTION`)
-
-#### Invalid SEH disposition
-
-    Occurs when the exception handling chain is corrupted or an invalid handler is invoked.  
-    Often caused by stack corruption.  
-    Exception: `EXCEPTION_INVALID_DISPOSITION`
-
-#### Attempted to continue after a non-continuable exception
-
-    Code tried to resume execution after a fatal exception that cannot be recovered from.  
-    Typically a logic or state machine error.  
-    Exception: `EXCEPTION_NONCONTINUABLE_EXCEPTION`
-
----
-
 ### Rare but useful crashes
 
 #### Breakpoint hit (INT 3 instruction executed)
@@ -116,6 +89,12 @@ int main()
     Executing a privileged CPU instruction (e.g. `hlt`, `cli`) from user mode causes a crash.  
     These are restricted to kernel-mode code.  
     Exception: `EXCEPTION_PRIV_INSTRUCTION`
+
+#### Attempted to continue after a non-continuable exception
+
+    Code tried to resume execution after a fatal exception that cannot be recovered from.  
+    Typically a logic or state machine error.  
+    Exception: `EXCEPTION_NONCONTINUABLE_EXCEPTION`
 
 #### Memory access failed (I/O or paging failure)
 
