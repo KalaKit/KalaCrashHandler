@@ -7,6 +7,8 @@
 #include <algorithm>
 #include <ctime>
 #include <iomanip>
+#include <fstream>
+#include <filesystem>
 #ifdef _WIN32
 #include <Windows.h>
 #include <dbghelp.h>
@@ -15,9 +17,7 @@
 #pragma comment(lib, "Shlwapi.lib")
 #endif
 
-//crash handler
 #include "crashHandler.hpp"
-#include "errorPopup.hpp"
 
 using std::wstring;
 using std::to_string;
@@ -27,6 +27,8 @@ using std::setfill;
 using std::setw;
 using std::time;
 using std::tm;
+using std::ofstream;
+using std::filesystem::path;
 #ifdef _WIN32
 using std::wstring;
 using std::hex;
@@ -120,36 +122,58 @@ namespace ElypsoUtils
 
 		AppendCallStackToStream(oss, info->ContextRecord);
 
-		string dumpFileName = WriteMiniDump(info);
-		oss << "A dump file '" << dumpFileName << "' was created to exe root folder.";
+		string exePath = GetExePath();
+		string timeStamp = GetCurrentTimeStamp();
 
-		ErrorPopup::CreateErrorPopup(oss.str());
+		if (createDump)
+		{
+			WriteMiniDump(info, exePath, timeStamp);
+			oss << "A dump file '" << timeStamp << ".dmp" << "' was created at exe root folder.";
+		}
+		else cout << "[CRASH HANDLER] Dump file creation disabled by user.";
+
+		WriteLog(oss.str(), exePath, timeStamp);
+		CreateErrorPopup(oss.str());
 
 		return EXCEPTION_EXECUTE_HANDLER;
 	}
 
-	string CrashHandler::WriteMiniDump(EXCEPTION_POINTERS* info)
+	void CrashHandler::WriteLog(
+		const string& message, 
+		const string& exePath,
+		const string& timeStamp)
 	{
-		string timeStamp = "crash_" + GetCurrentTimeStamp();
+		string filePath = timeStamp + ".txt";
+		string fullPath = (path(exePath) / filePath).string();
+		ofstream logFile(fullPath);
 
-		//replace characters not allowed in filenames
-		replace(timeStamp.begin(), timeStamp.end(), ':', '-');
-		timeStamp.erase(remove(timeStamp.begin(), timeStamp.end(), ']'), timeStamp.end());
-		timeStamp.erase(remove(timeStamp.begin(), timeStamp.end(), '['), timeStamp.end());
-		timeStamp.erase(remove(timeStamp.begin(), timeStamp.end(), ' '), timeStamp.end());
-		timeStamp += ".dmp";
+		if (!logFile.is_open())
+		{
+			cout << "[CRASH HANDLER] Failed to open log file!\n";
+			return;
+		}
 
-		//get executable directory
-		WCHAR exePath[MAX_PATH];
-		GetModuleFileNameW(nullptr, exePath, MAX_PATH);
-		PathRemoveFileSpecW(exePath);
+		logFile << message;
+
+		logFile.close();
+	}
+
+	void CrashHandler::WriteMiniDump(
+		EXCEPTION_POINTERS* info, 
+		const string& exePath, 
+		const string& timeStamp)
+	{
+		string filePath = timeStamp + ".dmp";
+
+		int sizeNeeded = MultiByteToWideChar(CP_UTF8, 0, exePath.c_str(), -1, nullptr, 0);
+		wstring widePath(sizeNeeded - 1, 0); // -1 to exclude null terminator
+		MultiByteToWideChar(CP_UTF8, 0, exePath.c_str(), -1, &widePath[0], sizeNeeded);
 
 		//build full path to dump file
-		wstring wideFilename = exePath;
-		wideFilename += L"\\" + wstring(timeStamp.begin(), timeStamp.end());
+		widePath += L"\\" + wstring(filePath.begin(), filePath.end());
 
 		HANDLE hFile = CreateFileW(
-			wideFilename.c_str(),
+			widePath.c_str(),
 			GENERIC_WRITE,
 			0,
 			nullptr,
@@ -163,7 +187,7 @@ namespace ElypsoUtils
 
 			DWORD mdThreadID = GetThreadId(GetCurrentThread());
 			dumpInfo.ThreadId = mdThreadID;
-			cout << "minidump thread: " << mdThreadID << "\n";
+			cout << "[CRASH HANDLER] Minidump thread: " << mdThreadID << "\n";
 
 			dumpInfo.ExceptionPointers = info;
 			dumpInfo.ClientPointers = FALSE;
@@ -179,8 +203,6 @@ namespace ElypsoUtils
 
 			CloseHandle(hFile);
 		}
-
-		return timeStamp;
 	}
 
 	string CrashHandler::GetCurrentTimeStamp()
@@ -196,7 +218,49 @@ namespace ElypsoUtils
 			<< setw(2) << localTime.tm_min << "_"
 			<< setw(2) << localTime.tm_sec;
 
-		return oss.str();
+		string result = oss.str();
+
+		string timeStamp = "crash_" + result;
+
+		//replace characters not allowed in filenames
+		replace(timeStamp.begin(), timeStamp.end(), ':', '-');
+		timeStamp.erase(remove(timeStamp.begin(), timeStamp.end(), ']'), timeStamp.end());
+		timeStamp.erase(remove(timeStamp.begin(), timeStamp.end(), '['), timeStamp.end());
+		timeStamp.erase(remove(timeStamp.begin(), timeStamp.end(), ' '), timeStamp.end());
+
+		return timeStamp;
+	}
+
+	string CrashHandler::GetExePath()
+	{
+		//get executable directory
+		WCHAR exePath[MAX_PATH];
+		GetModuleFileNameW(nullptr, exePath, MAX_PATH);
+		PathRemoveFileSpecW(exePath);
+
+		int sizeNeeded = WideCharToMultiByte(
+			CP_UTF8,
+			0,
+			exePath,
+			-1,
+			nullptr,
+			0,
+			nullptr,
+			nullptr);
+
+		string exePathStr(sizeNeeded - 1, 0);
+
+		WideCharToMultiByte(
+			CP_UTF8,
+			0,
+			exePath,
+			-1,
+			&exePathStr[0],
+			sizeNeeded,
+			nullptr,
+			nullptr);
+
+		return exePathStr;
 	}
 
 	void CrashHandler::AppendCallStackToStream(ostringstream& oss, CONTEXT* context)
@@ -205,7 +269,7 @@ namespace ElypsoUtils
 
 		HANDLE thread = GetCurrentThread();
 		DWORD mdThreadID = GetThreadId(thread);
-		cout << "stackwalk thread: " << mdThreadID << "\n";
+		cout << "[CRASH HANDLER] Stackwalk thread: " << mdThreadID << "\n";
 
 		SymSetOptions(
 			SYMOPT_LOAD_LINES         //file/line info
@@ -316,4 +380,30 @@ namespace ElypsoUtils
 		oss << "\n========================================\n\n";
 	}
 #endif
+
+	void CrashHandler::CreateErrorPopup(const string& message)
+	{
+		string title = name + " has shut down";
+
+		cout << "\n"
+			<< "===================="
+			<< "\n"
+			<< "PROGRAM SHUTDOWN\n"
+			<< "\n\n"
+			<< message
+			<< "\n"
+			<< "===================="
+			<< "\n";
+
+#ifdef _WIN32
+		int result = MessageBoxA(nullptr, message.c_str(), title.c_str(), MB_ICONERROR | MB_OK);
+
+		if (result == IDOK) Shutdown();
+#elif __linux__
+		string command = "zenity --error --text=\"" + (string)errorMessage + "\" --title=\"" + title + "\"";
+		int result = system(command.c_str());
+		(void)result;
+		Shutdown();
+#endif
+	}
 }
