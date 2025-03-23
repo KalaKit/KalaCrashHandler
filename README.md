@@ -72,12 +72,6 @@ The images in the images folder also show each crash type (except EXCEPTION_IN_P
     Results in a stack overflow exception and immediate crash.  
     Exception: `EXCEPTION_STACK_OVERFLOW`
 
-#### Illegal CPU instruction executed
-
-    Manually executes invalid or undefined CPU instructions (e.g. 0xFF 0xFF 0xFF 0xFF).  
-    Always causes an illegal instruction exception.  
-    Exception: `EXCEPTION_ILLEGAL_INSTRUCTION`
-
 #### Integer divide by zero
 
     Dividing an integer by zero results in a structured exception.  
@@ -87,6 +81,12 @@ The images in the images folder also show each crash type (except EXCEPTION_IN_P
 ---
 
 ### Rare but useful crashes
+
+#### Illegal CPU instruction executed
+
+    Manually executes invalid or undefined CPU instructions (e.g. 0xFF 0xFF 0xFF 0xFF).  
+    Always causes an illegal instruction exception.  
+    Exception: `EXCEPTION_ILLEGAL_INSTRUCTION`
 
 #### Breakpoint hit (INT 3 instruction executed)
 
