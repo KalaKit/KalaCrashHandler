@@ -55,6 +55,8 @@ namespace KalaKit
 		SetThreadStackGuarantee(&stackSize);
 
 		SetUnhandledExceptionFilter(HandleCrash);
+
+		LOG_SUCCESS("Successfully initialized KalaCrashHandler!");
 	}
 
 #ifdef _WIN32
@@ -160,7 +162,7 @@ namespace KalaKit
 
 		if (!logFile.is_open())
 		{
-			LOG_ERROR("Failed to open log file!\n");
+			LOG_ERROR("Failed to open log file!");
 			return;
 		}
 
@@ -198,7 +200,7 @@ namespace KalaKit
 
 			DWORD mdThreadID = GetThreadId(GetCurrentThread());
 			dumpInfo.ThreadId = mdThreadID;
-			LOG_DEBUG("Minidump thread : " << mdThreadID << "\n");
+			LOG_DEBUG("Minidump thread : " << mdThreadID);
 
 			dumpInfo.ExceptionPointers = info;
 			dumpInfo.ClientPointers = FALSE;
@@ -280,7 +282,7 @@ namespace KalaKit
 
 		HANDLE thread = GetCurrentThread();
 		DWORD mdThreadID = GetThreadId(thread);
-		LOG_DEBUG("Stackwalk thread : " << mdThreadID << "\n");
+		LOG_DEBUG("Stackwalk thread : " << mdThreadID);
 
 		SymSetOptions(
 			SYMOPT_LOAD_LINES         //file/line info
@@ -403,8 +405,7 @@ namespace KalaKit
 			<< "\n\n"
 			<< message
 			<< "\n"
-			<< "===================="
-			<< "\n");
+			<< "====================");
 
 #ifdef _WIN32
 		int result = MessageBoxA(nullptr, message.c_str(), title.c_str(), MB_ICONERROR | MB_OK);
