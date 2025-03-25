@@ -35,9 +35,9 @@ using std::hex;
 using std::dec;
 #endif
 
-namespace ElypsoUtils
+namespace KalaKit
 {
-	void CrashHandler::Initialize()
+	void KalaCrashHandler::Initialize()
 	{
 		//reserve emergency stack space (for stack overflow handling)
 		ULONG stackSize = 32768; //32KB
@@ -47,7 +47,7 @@ namespace ElypsoUtils
 	}
 
 #ifdef _WIN32
-	LONG WINAPI CrashHandler::HandleCrash(EXCEPTION_POINTERS* info)
+	LONG WINAPI KalaCrashHandler::HandleCrash(EXCEPTION_POINTERS* info)
 	{
 		DWORD code = info->ExceptionRecord->ExceptionCode;
 
@@ -138,7 +138,7 @@ namespace ElypsoUtils
 		return EXCEPTION_EXECUTE_HANDLER;
 	}
 
-	void CrashHandler::WriteLog(
+	void KalaCrashHandler::WriteLog(
 		const string& message, 
 		const string& exePath,
 		const string& timeStamp)
@@ -158,7 +158,7 @@ namespace ElypsoUtils
 		logFile.close();
 	}
 
-	void CrashHandler::WriteMiniDump(
+	void KalaCrashHandler::WriteMiniDump(
 		EXCEPTION_POINTERS* info, 
 		const string& exePath, 
 		const string& timeStamp)
@@ -205,7 +205,7 @@ namespace ElypsoUtils
 		}
 	}
 
-	string CrashHandler::GetCurrentTimeStamp()
+	string KalaCrashHandler::GetCurrentTimeStamp()
 	{
 		time_t now = time(nullptr);
 		tm localTime{};
@@ -231,7 +231,7 @@ namespace ElypsoUtils
 		return timeStamp;
 	}
 
-	string CrashHandler::GetExePath()
+	string KalaCrashHandler::GetExePath()
 	{
 		//get executable directory
 		WCHAR exePath[MAX_PATH];
@@ -263,7 +263,7 @@ namespace ElypsoUtils
 		return exePathStr;
 	}
 
-	void CrashHandler::AppendCallStackToStream(ostringstream& oss, CONTEXT* context)
+	void KalaCrashHandler::AppendCallStackToStream(ostringstream& oss, CONTEXT* context)
 	{
 		HANDLE process = GetCurrentProcess();
 
@@ -381,7 +381,7 @@ namespace ElypsoUtils
 	}
 #endif
 
-	void CrashHandler::CreateErrorPopup(const string& message)
+	void KalaCrashHandler::CreateErrorPopup(const string& message)
 	{
 		string title = name + " has shut down";
 

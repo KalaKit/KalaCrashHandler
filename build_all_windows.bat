@@ -1,11 +1,11 @@
 @echo off
 
-set "INPUT_ROOT=%~dp0"
+set "KALACRASH_ROOT=%~dp0"
 
-set "INSTALL_RELEASE=%INPUT_ROOT%install-release"
-set "INSTALL_DEBUG=%INPUT_ROOT%install-debug"
-set "BUILD_RELEASE=%INPUT_ROOT%build-release"
-set "BUILD_DEBUG=%INPUT_ROOT%build-debug"
+set "INSTALL_RELEASE=%KALACRASH_ROOT%install-release"
+set "INSTALL_DEBUG=%KALACRASH_ROOT%install-debug"
+set "BUILD_RELEASE=%KALACRASH_ROOT%build-release"
+set "BUILD_DEBUG=%KALACRASH_ROOT%build-debug"
 
 :: Remove old build and install folders
 if exist "%INSTALL_RELEASE%" rmdir /S /Q "%INSTALL_RELEASE%"
@@ -17,11 +17,11 @@ if exist "%BUILD_DEBUG%" rmdir /S /Q "%BUILD_DEBUG%"
 cmd /c "build_windows_release.bat"
 cmd /c "build_windows_debug.bat"
 
-set "ORIGIN_RELEASE_DLL=%INSTALL_RELEASE%\bin\CrashHandler.dll"
-set "ORIGIN_RELEASE_LIB=%INSTALL_RELEASE%\lib\CrashHandler.lib"
-set "ORIGIN_DEBUG_DLL=%INSTALL_DEBUG%\bin\CrashHandlerD.dll"
-set "ORIGIN_DEBUG_LIB=%INSTALL_DEBUG%\lib\CrashHandlerD.lib"
-set "ORIGIN_HEADER=%INPUT_ROOT%\install-release\include\crashHandler.hpp"
+set "ORIGIN_RELEASE_DLL=%INSTALL_RELEASE%\bin\KalaCrashHandler.dll"
+set "ORIGIN_RELEASE_LIB=%INSTALL_RELEASE%\lib\KalaCrashHandler.lib"
+set "ORIGIN_DEBUG_DLL=%INSTALL_DEBUG%\bin\KalaCrashHandlerD.dll"
+set "ORIGIN_DEBUG_LIB=%INSTALL_DEBUG%\lib\KalaCrashHandlerD.lib"
+set "ORIGIN_HEADER=%KALACRASH_ROOT%\install-release\include\crashHandler.hpp"
 
 if not exist "%ORIGIN_RELEASE_DLL%" (
 	echo Failed to find origin release dll from '%ORIGIN_RELEASE_DLL%'!
@@ -49,7 +49,7 @@ if not exist "%ORIGIN_HEADER%" (
 	exit /b 1
 )
 
-set "TARGET_ROOT=%INPUT_ROOT%..\Elypso-engine\_external_shared\CrashHandler"
+set "TARGET_ROOT=%KALACRASH_ROOT%..\Elypso-engine\_external_shared\KalaCrashHandler"
 
 if not exist "%TARGET_ROOT%" (
 	echo Failed to find target root from '%TARGET_ROOT%'!
@@ -57,10 +57,10 @@ if not exist "%TARGET_ROOT%" (
 	exit /b 1
 )
 
-set "TARGET_RELEASE_DLL=%TARGET_ROOT%\release\CrashHandler.dll"
-set "TARGET_RELEASE_LIB=%TARGET_ROOT%\release\CrashHandler.lib"
-set "TARGET_DEBUG_DLL=%TARGET_ROOT%\debug\CrashHandlerD.dll"
-set "TARGET_DEBUG_LIB=%TARGET_ROOT%\debug\CrashHandlerD.lib"
+set "TARGET_RELEASE_DLL=%TARGET_ROOT%\release\KalaCrashHandler.dll"
+set "TARGET_RELEASE_LIB=%TARGET_ROOT%\release\KalaCrashHandler.lib"
+set "TARGET_DEBUG_DLL=%TARGET_ROOT%\debug\KalaCrashHandlerD.dll"
+set "TARGET_DEBUG_LIB=%TARGET_ROOT%\debug\KalaCrashHandlerD.lib"
 set "TARGET_HEADER=%TARGET_ROOT%\crashHandler.hpp"
 
 :: Create release and debug folders in case they dont exist yet
@@ -74,7 +74,7 @@ copy /Y "%ORIGIN_DEBUG_DLL%" "%TARGET_DEBUG_DLL%"
 copy /Y "%ORIGIN_DEBUG_LIB%" "%TARGET_DEBUG_LIB%"
 copy /Y "%ORIGIN_HEADER%" "%TARGET_HEADER%"
 
-echo Successfully installed CrashHandler!
+echo Successfully installed KalaCrashHandler!
 
 pause
 exit /b 0

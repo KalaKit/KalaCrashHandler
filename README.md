@@ -1,8 +1,12 @@
-# Introduction
+# KalaKalaCrashHandler
 
-CrashHandler is a lightweight C++ 20 library for Windows that detects mostly common and some rarer but useful crashes caused by the program the crash handler is attached to. It will display crash messages in the error popup and it will generate a log file with extra info and a dmp file for debugging.
+[![License](https://img.shields.io/badge/license-Zlib-blue)](LICENSE.md)
+![Platform](https://img.shields.io/badge/platform-Windows-brightgreen)
+![Development Stage](https://img.shields.io/badge/development-Alpha-yellow)
 
-![Crash Screenshot](images/crash_popup.png)
+![Logo](logo.png)
+
+KalaCrashHandler is a lightweight C++ 20 library for Windows that detects mostly common and some rarer but useful crashes caused by the program the crash handler is attached to. It will display crash messages in the error popup and it will generate a log file with extra info and a dmp file for debugging.
 
 # Prerequisites (when compiling from source code)
 
@@ -19,7 +23,7 @@ To compile from source code simply run 'build_windows_release.bat' or 'build_win
 
 #include "crashHandler.hpp"
 
-using ElypsoUtils::CrashHandler;
+using KalaKit::KalaCrashHandler;
 
 static void Shutdown()
 {
@@ -29,21 +33,21 @@ static void Shutdown()
 int main()
 {
     //call this function to initialize crash handler
-    CrashHandler::Initialize();
+    KalaCrashHandler::Initialize();
 
     //attach a string to this function to set the name
     //of the program that will be displayed when the program crashes
     std::string name = "MyProgramName";
-    CrashHandler::SetProgramName(name);
+    KalaCrashHandler::SetProgramName(name);
 	
     //set this to true if you wish to get a .dmp file 
     //generated at the location of your executable
     //every time the application crashes on Windows
-    CrashHandler::SetDumpCreateState(true);
+    KalaCrashHandler::SetDumpCreateState(true);
 
     //attach any function similarly to this that will be called
     //once the user presses Ok or closes the error popup
-    CrashHandler::SetShutdownCallback([] { Shutdown(); });
+    KalaCrashHandler::SetShutdownCallback([] { Shutdown(); });
 
     return 0;
 }

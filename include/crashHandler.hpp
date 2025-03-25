@@ -6,13 +6,13 @@
 #pragma once
 
 #ifdef _WIN32
-	#ifdef CRASHHANDLER_DLL_EXPORT
-		#define CRASHHANDLER_API __declspec(dllexport)
+	#ifdef KALACRASH_DLL_EXPORT
+		#define KALACRASH_API __declspec(dllexport)
 	#else
-		#define CRASHHANDLER_API __declspec(dllimport)
+		#define KALACRASH_API __declspec(dllimport)
 	#endif
 #else
-	#define CRASHHANDLER_API
+	#define KALACRASH_API
 #endif
 
 #include <string>
@@ -22,13 +22,13 @@
 #include <Windows.h>
 #endif
 
-namespace ElypsoUtils
+namespace KalaKit
 {
 	using std::string;
 	using std::ostringstream;
 	using std::function;
 
-	class CRASHHANDLER_API CrashHandler
+	class KALACRASH_API KalaCrashHandler
 	{
 	public:
 		/// <summary>
@@ -46,7 +46,7 @@ namespace ElypsoUtils
 
 		/// <summary>
 		/// Assign a shutdown function with this function 
-		/// that is called internally by CrashHandler whenever 
+		/// that is called internally by KalaCrashHandler whenever 
 		/// a crash is detected after the error popup has beem closed.
 		/// </summary>
 		static inline void SetShutdownCallback(function<void()> callback) 

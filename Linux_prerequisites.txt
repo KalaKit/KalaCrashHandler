@@ -1,5 +1,5 @@
 ===========================================================================
-THESE COMMANDS SHOULD ALWAYS BE RAN BEFORE COMPILING CRASH HANDLER FOR THE FIRST TIME
+THESE COMMANDS SHOULD ALWAYS BE RAN BEFORE COMPILING KALACRASHHANDLER
 ===========================================================================
 
 --- SYSTEM SETUP ---

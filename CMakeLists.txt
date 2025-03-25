@@ -32,7 +32,7 @@ set(PROJECT_MINOR_VERSION 0)
 set(PROJECT_PATCH_VERSION 0)
 set(PROJECT_VERSION "${PROJECT_MAJOR_VERSION}.${PROJECT_MINOR_VERSION}.${PROJECT_PATCH_VERSION}")
 
-project("CrashHandler" VERSION ${PROJECT_VERSION})
+project("KalaCrashHandler" VERSION ${PROJECT_VERSION})
 
 # Set runtime library type for MSVC
 if (MSVC)
@@ -44,51 +44,51 @@ get_filename_component(PARENT_DIR "${CMAKE_SOURCE_DIR}" DIRECTORY)
 set(PARENT_DIR_PATH "${PARENT_DIR}")
 
 # Physics files
-set(CRASH_SRC_DIR "${CMAKE_SOURCE_DIR}/src")
-set(CRASH_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/include")
+set(KALACRASH_SRC_DIR "${CMAKE_SOURCE_DIR}/src")
+set(KALACRASH_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/include")
 
 # Add source files
-file(GLOB_RECURSE CRASH_SRC_FILES CONFIGURE_DEPENDS
-    ${CRASH_SRC_DIR}/*.cpp
+file(GLOB_RECURSE KALACRASH_SRC_FILES CONFIGURE_DEPENDS
+    ${KALACRASH_SRC_DIR}/*.cpp
 )
 
 # Build as a shared library (DLL)
-add_library(CrashHandler SHARED ${CRASH_SRC_FILES})
-set_target_properties(CrashHandler PROPERTIES OUTPUT_NAME "CrashHandler")
-target_compile_features(CrashHandler PRIVATE cxx_std_20)
+add_library(KalaCrashHandler SHARED ${KALACRASH_SRC_FILES})
+set_target_properties(KalaCrashHandler PROPERTIES OUTPUT_NAME "KalaCrashHandler")
+target_compile_features(KalaCrashHandler PRIVATE cxx_std_20)
 
 # Append 'D' suffix to debug builds for both Windows and Linux
-set_target_properties(CrashHandler PROPERTIES
-    OUTPUT_NAME "CrashHandler$<$<CONFIG:Debug>:D>"
+set_target_properties(KalaCrashHandler PROPERTIES
+    OUTPUT_NAME "KalaCrashHandler$<$<CONFIG:Debug>:D>"
 )
 
 # Apply all directories to target
-target_include_directories(CrashHandler PRIVATE
+target_include_directories(KalaCrashHandler PRIVATE
 	# Library files
-    ${CRASH_INCLUDE_DIR}
+    ${KALACRASH_INCLUDE_DIR}
 )
 
 if (WIN32)
-    target_link_libraries(CrashHandler PRIVATE)
+    target_link_libraries(KalaCrashHandler PRIVATE)
 else()
     find_package(X11 QUIET)
     if (X11_FOUND)
-        target_link_libraries(CrashHandler PRIVATE ${X11_LIBRARIES})
+        target_link_libraries(KalaCrashHandler PRIVATE ${X11_LIBRARIES})
     endif()
 endif()
 
 # Define preprocessor directives
-target_compile_definitions(CrashHandler PRIVATE CRASHHANDLER_DLL_EXPORT)
+target_compile_definitions(KalaCrashHandler PRIVATE KALACRASH_DLL_EXPORT)
 
-# Install the DLL and its import library (CrashHandler.dll + CrashHandler.lib)
-install(TARGETS CrashHandler
+# Install the DLL and its import library (KalaCrashHandler.dll + KalaCrashHandler.lib)
+install(TARGETS KalaCrashHandler
     RUNTIME DESTINATION bin  # .dll (Windows) and .so (Linux)
     LIBRARY DESTINATION lib  # .lib (Windows import lib) or .so (Linux)
     ARCHIVE DESTINATION lib  # .lib (Linux static lib)
 )
 
 # Install header files
-install(DIRECTORY ${CRASH_INCLUDE_DIR}/
+install(DIRECTORY ${KALACRASH_INCLUDE_DIR}/
     DESTINATION include
     FILES_MATCHING PATTERN "*.hpp"
 )

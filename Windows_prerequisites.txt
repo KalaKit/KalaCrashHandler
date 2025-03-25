@@ -1,5 +1,5 @@
 ----------------------------------------------------------------------
-HOW TO SET UP NECESSARY THINGS TO COMPILE CRASH HANDLER
+HOW TO SET UP NECESSARY THINGS TO COMPILE KALACRASHHANDLER
 ---------------------------------------------------------------------
 
 Download Visual Studio 2022 Installer from here:

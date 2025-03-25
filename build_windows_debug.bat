@@ -1,6 +1,6 @@
 @echo off
 
-:: This batch file builds CrashHandler from source code using MSVC (cl.exe) for Debug.
+:: This batch file builds KalaCrashHandler from source code using MSVC (cl.exe) for Debug.
 
 :: Set the root folder as the location of this script
 set "PHYSICS_ROOT=%~dp0"
@@ -23,8 +23,8 @@ cd /d "%BUILD_DIR%" || (
     exit /b 1
 )
 
-:: Configure CrashHandler with CMake
-echo [INFO] Configuring CrashHandler with CMake...
+:: Configure KalaCrashHandler with CMake
+echo [INFO] Configuring KalaCrashHandler with CMake...
 cmake -G "Ninja" ^
   -DCMAKE_BUILD_TYPE=Debug ^
   -DCMAKE_C_COMPILER=cl ^
@@ -38,15 +38,15 @@ cmake -G "Ninja" ^
     exit /b 1
 )
 
-:: Build CrashHandler with Ninja
-echo [INFO] Building CrashHandler...
+:: Build KalaCrashHandler with Ninja
+echo [INFO] Building KalaCrashHandler...
 ninja -j%NUMBER_OF_PROCESSORS% || (
     echo [ERROR] Build process failed.
     exit /b 1
 )
 
-:: Install CrashHandler
-echo [INFO] Installing CrashHandler...
+:: Install KalaCrashHandler
+echo [INFO] Installing KalaCrashHandler...
 ninja install || (
     echo [ERROR] Install process failed.
     exit /b 1
@@ -56,11 +56,10 @@ ninja install || (
 for /f "tokens=1-4 delims=:.," %%a in ("%TIME%") do set "TIME_END=%%a:%%b:%%c"
 
 :: Success message
-echo [SUCCESS] CrashHandler built and installed successfully (Debug).
+echo [SUCCESS] KalaCrashHandler built and installed successfully (Debug).
 echo ---------------------------------------------
-echo Shared library: %INSTALL_DIR%\bin\CrashHandlerD.dll
-echo Static library: %INSTALL_DIR%\lib\CrashHandler_StaticD.lib
-echo Import library: %INSTALL_DIR%\lib\CrashHandlerD.lib
+echo Shared library: %INSTALL_DIR%\bin\KalaCrashHandlerD.dll
+echo Static library: %INSTALL_DIR%\lib\KalaCrashHandler.lib
 echo Include headers: %INSTALL_DIR%\include
 echo Build duration: %TIME_START% - %TIME_END%
 echo ---------------------------------------------
