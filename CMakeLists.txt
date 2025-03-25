@@ -78,7 +78,17 @@ else()
 endif()
 
 # Define preprocessor directives
-target_compile_definitions(KalaCrashHandler PRIVATE KALACRASH_DLL_EXPORT)
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+	target_compile_definitions(KalaCrashHandler PRIVATE 
+		KALACRASH_DLL_EXPORT
+		KALACRASH_DEBUG=1
+	)
+else()
+	target_compile_definitions(KalaCrashHandler PRIVATE 
+		KALACRASH_DLL_EXPORT
+		KALACRASH_DEBUG=0
+	)
+endif()
 
 # Install the DLL and its import library (KalaCrashHandler.dll + KalaCrashHandler.lib)
 install(TARGETS KalaCrashHandler

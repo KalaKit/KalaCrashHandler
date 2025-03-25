@@ -3,6 +3,18 @@
 //This is free software, and you are welcome to redistribute it under certain conditions.
 //Read LICENSE.md for more information.
 
+//main log macro
+#define WRITE_LOG(type, msg) std::cout << "[KALAKIT_CRASHHANDLER | " << type << "] " << msg << "\n"
+
+//log types
+#if KALACRASH_DEBUG
+	#define LOG_DEBUG(msg) WRITE_LOG("DEBUG", msg)
+#else
+	#define LOG_DEBUG(msg)
+#endif
+#define LOG_SUCCESS(msg) WRITE_LOG("SUCCESS", msg)
+#define LOG_ERROR(msg) WRITE_LOG("ERROR", msg)
+
 #include <iostream>
 #include <algorithm>
 #include <ctime>
@@ -21,7 +33,6 @@
 
 using std::wstring;
 using std::to_string;
-using std::cout;
 using std::replace;
 using std::setfill;
 using std::setw;
@@ -130,7 +141,7 @@ namespace KalaKit
 			WriteMiniDump(info, exePath, timeStamp);
 			oss << "A dump file '" << timeStamp << ".dmp" << "' was created at exe root folder.";
 		}
-		else cout << "[CRASH HANDLER] Dump file creation disabled by user.";
+		else LOG_DEBUG("Dump file creation disabled by user.");
 
 		WriteLog(oss.str(), exePath, timeStamp);
 		CreateErrorPopup(oss.str());
@@ -149,7 +160,7 @@ namespace KalaKit
 
 		if (!logFile.is_open())
 		{
-			cout << "[CRASH HANDLER] Failed to open log file!\n";
+			LOG_ERROR("Failed to open log file!\n");
 			return;
 		}
 
@@ -187,7 +198,7 @@ namespace KalaKit
 
 			DWORD mdThreadID = GetThreadId(GetCurrentThread());
 			dumpInfo.ThreadId = mdThreadID;
-			cout << "[CRASH HANDLER] Minidump thread: " << mdThreadID << "\n";
+			LOG_DEBUG("Minidump thread : " << mdThreadID << "\n");
 
 			dumpInfo.ExceptionPointers = info;
 			dumpInfo.ClientPointers = FALSE;
@@ -269,7 +280,7 @@ namespace KalaKit
 
 		HANDLE thread = GetCurrentThread();
 		DWORD mdThreadID = GetThreadId(thread);
-		cout << "[CRASH HANDLER] Stackwalk thread: " << mdThreadID << "\n";
+		LOG_DEBUG("Stackwalk thread : " << mdThreadID << "\n");
 
 		SymSetOptions(
 			SYMOPT_LOAD_LINES         //file/line info
@@ -385,7 +396,7 @@ namespace KalaKit
 	{
 		string title = name + " has shut down";
 
-		cout << "\n"
+		LOG_SUCCESS("\n"
 			<< "===================="
 			<< "\n"
 			<< "PROGRAM SHUTDOWN\n"
@@ -393,7 +404,7 @@ namespace KalaKit
 			<< message
 			<< "\n"
 			<< "===================="
-			<< "\n";
+			<< "\n");
 
 #ifdef _WIN32
 		int result = MessageBoxA(nullptr, message.c_str(), title.c_str(), MB_ICONERROR | MB_OK);
